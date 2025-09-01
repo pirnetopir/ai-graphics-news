@@ -46,8 +46,7 @@ export async function annotateItem(itemId: number, text: string) {
       });
       const out = res.choices[0].message?.content ?? "";
       // naive parse
-      const parts = out.split(/
-+/);
+      const parts = out.replace(/\r/g, '').split('\n');
       headline = parts[0]?.trim() || null;
       short = parts.slice(1, 3).join(" ").trim() || null;
       bullets = parts.slice(3).join("\n").trim() || null;
