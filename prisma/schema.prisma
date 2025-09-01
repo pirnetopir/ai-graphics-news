@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Source {
+  id          Int      @id @default(autoincrement())
+  url         String   @unique
+  kind        String   // 'rss' | 'youtube' | 'website'
+  name        String
+  authority   Float    @default(0.5)
+  lang        String?
+  lastSeenAt  DateTime?
+  items       Item[]
+}
+
+model Item {
+  id           Int       @id @default(autoincrement())
+  sourceId     Int
+  source       Source    @relation(fields: [sourceId], references: [id])
+  url          String    @unique
+  title        String
+  excerpt      String?
+  contentHtml  String?
+  publishedAt  DateTime?
+  lang         String?
+  createdAt    DateTime  @default(now())
+  summary      Summary?
+  score        Score?
+  tags         ItemTag[]
+}
+
+model Tag {
+  id     Int    @id @default(autoincrement())
+  slug   String @unique
+  name   String
+  group  String
+  items  ItemTag[]
+}
+
+model ItemTag {
+  itemId     Int
+  tagId      Int
+  confidence Float  @default(0.5)
+  item       Item   @relation(fields: [itemId], references: [id])
+  tag        Tag    @relation(fields: [tagId], references: [id])
+
+  @@id([itemId, tagId])
+}
+
+model Score {
+  itemId         Int    @id
+  relevance      Float?
+  novelty        Float?
+  authority      Float?
+  applicability  Float?
+  impact         Float?
+  licenseClarity Float?
+  community      Float?
+  item           Item   @relation(fields: [itemId], references: [id])
+}
+
+model Summary {
+  itemId   Int    @id
+  headline String?
+  short    String?
+  bullets  String?  // newline-separated bullets
+  item     Item   @relation(fields: [itemId], references: [id])
+}

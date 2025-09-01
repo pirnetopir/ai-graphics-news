@@ -1,0 +1,24 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+a { color: inherit; text-decoration: underline; }
+.card {
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(255,255,255,.02);
+}
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  margin-right: 6px;
+  margin-bottom: 4px;
+}
+.time { opacity: .6; font-size: 12px; }
+.source { opacity: .75; font-size: 12px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 820px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
