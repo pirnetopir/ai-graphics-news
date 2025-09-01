@@ -1,4 +1,4 @@
-import { prisma } from "../src/lib/db";
+import { prisma } from "./src/lib/db";
 import Parser from "rss-parser";
 
 const parser = new Parser();
