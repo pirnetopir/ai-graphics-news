@@ -1,5 +1,5 @@
 import type { Item } from "@prisma/client";
-import { prisma } from "./db.js";
+import { prisma } from "./db";
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
 
