@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic"; // nedovoľ SSG počas build-u
+export const revalidate = 0;            // bez cache
+
 import { prisma } from "@/lib/db";
 import { ItemCard } from "@/components/ItemCard";
 import type { Prisma } from "@prisma/client";
@@ -11,11 +14,17 @@ type ItemWithRels = Prisma.ItemGetPayload<{
 }>;
 
 export default async function Home() {
-  const items: ItemWithRels[] = await prisma.item.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 20,
-    include: { source: true, summary: true, tags: { include: { tag: true } } },
-  });
+  let items: ItemWithRels[] = [];
+  try {
+    items = await prisma.item.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 20,
+      include: { source: true, summary: true, tags: { include: { tag: true } } },
+    });
+  } catch (e) {
+    // Ak DB nie je pripravená počas prvého štartu, stránka sa aj tak vyrenderuje bez pádu
+    items = [];
+  }
 
   return (
     <main>
@@ -26,7 +35,7 @@ export default async function Home() {
           {items.map((it) => (
             <ItemCard
               key={it.id}
-              item={it as any}                // ItemCard očakáva typy z @prisma/client; štruktúra sedí
+              item={it as any}
               source={it.source}
               summary={it.summary}
               tags={it.tags.map((t) => ({ ...t.tag, confidence: t.confidence }))}
